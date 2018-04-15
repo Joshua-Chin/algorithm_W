@@ -153,3 +153,6 @@ class Environment(object):
     def free_types(self, function):
             return self.free_types(function.arg) | \
                    self.free_types(function.result)
+
+def infer(expr):
+    return Environment().typeof(expr)
