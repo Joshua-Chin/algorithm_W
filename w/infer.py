@@ -25,7 +25,7 @@ class Environment(object):
     @dispatch(exprs.variable)
     def w(self, variable):
         # variables have a type that depending on the environment
-        return self.specialize(self._typings[variable])
+        return self.find(self.specialize(self._typings[variable]))
 
     @dispatch(exprs.call)
     def w(self, call):
@@ -51,14 +51,14 @@ class Environment(object):
         value = self.w(let.value)
         self.unify(var, value)
         # generalize the type of var
-        self._typings[let.var] = self.generalize(value)
+        self._typings[let.var] = self.generalize(self.find(var))
         return self.w(let.body)
 
 
     def newvar(self):
         """Returns a new type variable unique within the environment"""
         self._typevars += 1
-        return types.variable(self._typevars)
+        return types.variable('a' + str(self._typevars))
 
 
     @dispatch(types.literal)
@@ -122,7 +122,6 @@ class Environment(object):
            isinstance(y, types.function):
             self.unify(x.arg, y.arg)
             self.unify(x.result, y.result)
-            return
         # if either is a type variable, they can be unified
         elif isinstance(x, types.variable) or \
              isinstance(y, types.variable):
@@ -131,11 +130,10 @@ class Environment(object):
                 x, y = y, x
             # check for infinite types
             if y in self.free_types(x):
-                raise TypeError(f'unifying type {x} and type {y} will result in infinite type')
+                raise TypeError(f'unifying {x} and {y} will result in infinite type')
             self._types.merge(x, y)
-            return
-
-        raise TypeError(f'type {x} and type {y} cannot be unified')
+        else:
+            raise TypeError(f'{x} and {y} cannot be unified')
 
 
     def generalize(self, type):
