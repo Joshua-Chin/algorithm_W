@@ -1,8 +1,8 @@
 from multipledispatch import dispatch
 
-import exprs
-import types
-from disjointset import DisjointSet
+import w.exprs as exprs
+import w.types as types
+from w.disjointset import DisjointSet
 
 class Environment(object):
 
@@ -39,20 +39,20 @@ class Environment(object):
     def w(self, function):
         arg = self.newvar()
         self._typings[function.arg] = arg
-        body = self.w(expr.body)
+        body = self.w(function.body)
         return types.function(self.find(arg), body)
 
     @dispatch(exprs.let)
-    def w(self, function):
+    def w(self, let):
         # insert expr.var into typings to allow recursion
         var = self.newvar()
-        self._typings[expr.var] = var
+        self._typings[let.var] = var
         # compute type of value and unify it with var
-        value = self.w(expr.value)
+        value = self.w(let.value)
         self.unify(var, value)
         # generalize the type of var
-        self._typings[expr.var] = self.generalize(value)
-        return self.w(expr.body)
+        self._typings[let.var] = self.generalize(value)
+        return self.w(let.body)
 
 
     def newvar(self):
@@ -124,7 +124,7 @@ class Environment(object):
             self.unify(x.result, y.result)
             return
         # if either is a type variable, they can be unified
-        elif isinstance(x, types.variable) or
+        elif isinstance(x, types.variable) or \
              isinstance(y, types.variable):
             # ensure that `y` is a type variable
             if isinstance(x, types.variable):
