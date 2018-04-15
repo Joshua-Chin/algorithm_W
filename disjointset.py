@@ -42,6 +42,7 @@ class DisjointSet(object):
             # ensure that the respresentative of parition `x` is the 
             # representative of the new partition
             xroot.value, yroot.value = yroot.value, xroot.value
+            # update the node dict
             self.nodes[xroot.value] = xroot
             self.nodes[yroot.value] = yroot
         # make xroot the parent of yroot
