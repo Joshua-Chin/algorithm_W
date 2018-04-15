@@ -1,5 +1,6 @@
 from collections import defaultdict
 from functools import namedtuple
+from pprint import pformat
 
 class DisjointSet(object):
     """
@@ -48,6 +49,12 @@ class DisjointSet(object):
         # make xroot the parent of yroot
         yroot.parent = xroot
         xroot.size += yroot.size
+
+    def __repr__(self):
+        partitions = defaultdict(list)
+        for elem in self.nodes:
+            partitions[self.find(elem)].append(elem)
+        return pformat(dict(partitions))
 
 class Node(object):
     def __init__(self, value):
