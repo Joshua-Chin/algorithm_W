@@ -129,7 +129,7 @@ class Environment(object):
                 x, y = y, x
             # check for infinite types
             if y in self.free_types(x):
-                raise TypeError(f'unifying {x} and {y} will result in infinite type')
+                raise TypeError(f'unifying {x} and {y} will result in an infinite type')
             self._types.merge(x, y)
         else:
             raise TypeError(f'{x} and {y} cannot be unified')
