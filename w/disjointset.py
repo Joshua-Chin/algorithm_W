@@ -15,7 +15,7 @@ class DisjointSet(object):
         """
         # if x is not in the set, add it.
         if x not in self.nodes:
-            self.nodes[x] = Node(x, 1)
+            self.nodes[x] = Node(x)
             return x
         # otherwise, find the root.
         x = self.nodes[x]

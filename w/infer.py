@@ -25,14 +25,14 @@ class Environment(object):
     @dispatch(exprs.variable)
     def w(self, variable):
         # variables have a type that depending on the environment
-        return self.specialize(self.find(self._typings[variable]))
+        return self.specialize(self._typings[variable])
 
     @dispatch(exprs.call)
     def w(self, call):
         function = self.w(call.function)
         arg = self.w(call.arg)
         result = self.newvar()
-        self.unify(func, types.function(arg, result))
+        self.unify(function, types.function(arg, result))
         return self.find(result)
 
     @dispatch(exprs.function)
@@ -83,31 +83,31 @@ class Environment(object):
         """Specializes a polymorphic type into a monomorphic one"""
         return self.specialize(type, {})
 
-    @dispatch((types.literal, object))
+    @dispatch(types.literal, object)
     def specialize(self, literal, subs):
         # type literals are already monomorphic
         return literal
 
-    @dispatch((types.variable, object))
+    @dispatch(types.variable, object)
     def specialize(self, variable, subs):        
         # type variables may be polymorphic within a context
-        return substitions.get(variable, variable)
+        return subs.get(variable, variable)
         
         # function_types may have polymorphic bodies
-    @dispatch((types.function, object))
+    @dispatch(types.function, object)
     def specialize(self, function, subs):
             arg = self.specialize(function.arg, subs)
             result = self.specialize(function.result, subs)
             return types.function(arg, result)
 
-    @dispatch((types.polymorphic, object))
+    @dispatch(types.polymorphic, object)
     def specialize(self, polymorphic, subs):
         # polymorphic forms are clearly polymorphic
         subs.update({
             bound_type: self.newvar()
             for bound_type in polymorphic.bound_types
         })
-        return self.specialize(polymorphic.type, substitions)
+        return self.specialize(polymorphic.type, subs)
 
 
     def unify(self, x, y):
