@@ -93,12 +93,11 @@ class Environment(object):
         # type variables may be polymorphic within a context
         return subs.get(variable, variable)
         
-        # function_types may have polymorphic bodies
     @dispatch(types.function, object)
     def specialize(self, function, subs):
-            arg = self.specialize(function.arg, subs)
-            result = self.specialize(function.result, subs)
-            return types.function(arg, result)
+        arg = self.specialize(function.arg, subs)
+        result = self.specialize(function.result, subs)
+        return types.function(arg, result)
 
     @dispatch(types.polymorphic, object)
     def specialize(self, polymorphic, subs):
