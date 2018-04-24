@@ -44,7 +44,9 @@ class Environment(object):
 
     @dispatch(exprs.let)
     def w(self, let):
-        # insert expr.var into typings to allow recursion
+        # NOTE: Polymorphic recursion is undecidable. We assume that any
+        # recursion is monomorphic. However, mutual recursion would be easy
+        # implement.
         var = self.newvar()
         self._typings[let.var] = var
         # compute type of value and unify it with var
