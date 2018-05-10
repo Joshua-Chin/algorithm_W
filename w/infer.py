@@ -3,12 +3,13 @@ from multipledispatch import dispatch
 import w.exprs as exprs
 import w.types as types
 from w.disjointset import DisjointSet
+from w.builtins import typings
 
 class Environment(object):
 
     def __init__(self):
         self._types = DisjointSet()
-        self._typings = {}
+        self._typings = dict(typings)
         self._typevars = 0
 
 

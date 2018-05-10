@@ -1,6 +1,15 @@
-from types import *
-from exprs import variable
+from w.types import *
+import w.exprs as exprs
+
+num_binop = function(literal(int), function(literal(int), literal(int)))
 
 typings = {
-    'if': function()
+    exprs.variable('if'): polymorphic([variable('a')],
+        function(literal(bool), function(variable('a'), function(variable('a'), variable('a'))))),
+    exprs.variable('equals'): polymorphic([variable('a')],
+        function(variable('a'), function(variable('a'), literal(bool)))),
+    exprs.variable('plus'): num_binop,
+    exprs.variable('minus'): num_binop,
+    exprs.variable('muliply'): num_binop,
+    exprs.variable('divide'): num_binop,
 }
