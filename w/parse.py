@@ -1,3 +1,4 @@
+import ast
 from lark import Lark, InlineTransformer
 import w.exprs as exprs
 
@@ -30,10 +31,10 @@ class T(InlineTransformer):
         return expr
 
     def int(self, value):
-        return exprs.literal(int(value))
+        return exprs.literal(ast.literal_val(value))
 
     def string(self, value):
-        return exprs.literal(value.decode('unicode-escape'))
+        return exprs.literal(ast.literal_eval(value))
 
     def variable(self, name):
         return exprs.variable(str(name))
