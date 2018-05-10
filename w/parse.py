@@ -31,7 +31,7 @@ class T(InlineTransformer):
         return expr
 
     def int(self, value):
-        return exprs.literal(ast.literal_val(value))
+        return exprs.literal(ast.literal_eval(value))
 
     def string(self, value):
         return exprs.literal(ast.literal_eval(value))
