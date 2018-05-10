@@ -7,6 +7,7 @@ if __name__ == '__main__':
             try:
                 print(typeof(input('> ')))
             except (UnexpectedToken, UnexpectedInput) as e:
+                raise e
                 print(f'Syntax Error: line {e.line}, col {e.column}')
             except InferenceError as e:
                 print(f'Type Error: {e}')

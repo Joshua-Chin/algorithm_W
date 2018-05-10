@@ -8,6 +8,7 @@ expr: "(" expr ")"                      -> parens
     | "let" VAR "=" expr "in" expr      -> let
     | "\\" VAR "->" expr                -> function
     | expr "==" expr                    -> equals
+    | expr "!=" expr                    -> not_equal
     | expr "+" expr                     -> plus
     | expr "-" expr                     -> minus
     | expr "*" expr                     -> multiply
@@ -52,6 +53,9 @@ class T(InlineTransformer):
     
     def equals(self, left, right):
         return call(call(variable('equals'), left), right)
+
+     def not_equal(self, left, right):
+        return call(call(variable('not_equal'), left), right)       
 
     def plus(self, left, right):
         return call(call(variable('plus'), left), right)

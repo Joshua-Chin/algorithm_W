@@ -8,8 +8,10 @@ typings = {
         function(literal(bool), function(variable('a'), function(variable('a'), variable('a'))))),
     exprs.variable('equals'): polymorphic([variable('a')],
         function(variable('a'), function(variable('a'), literal(bool)))),
+    exprs.variable('not_equal'): polymorphic([variable('a')],
+        function(variable('a'), function(variable('a'), literal(bool)))),
     exprs.variable('plus'): num_binop,
     exprs.variable('minus'): num_binop,
-    exprs.variable('muliply'): num_binop,
+    exprs.variable('multiply'): num_binop,
     exprs.variable('divide'): num_binop,
 }
