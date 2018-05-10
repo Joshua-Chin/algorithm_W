@@ -131,10 +131,10 @@ class Environment(object):
                 x, y = y, x
             # check for infinite types
             if y in self.free_types(x):
-                raise TypeError(f'unifying {x} and {y} will result in an infinite type')
+                raise InferenceError(f'unifying {x} and {y} will result in an infinite type')
             self._types.merge(x, y)
         else:
-            raise TypeError(f'{x} and {y} cannot be unified')
+            raise InferenceError(f'{x} and {y} cannot be unified')
 
 
     def generalize(self, type):
@@ -158,3 +158,6 @@ class Environment(object):
 
 def infer(expr):
     return Environment().typeof(expr)
+
+class InferenceError(Exception):
+    pass
