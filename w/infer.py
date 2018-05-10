@@ -25,7 +25,10 @@ class Environment(object):
     @dispatch(exprs.variable)
     def w(self, variable):
         # variables have a type that depending on the environment
-        return self.find(self.specialize(self._typings[variable]))
+        try:
+            return self.find(self.specialize(self._typings[variable]))
+        except KeyError:
+            raise InferenceError(f'"{variable.name}" is undefined')
 
     @dispatch(exprs.call)
     def w(self, call):
@@ -131,10 +134,10 @@ class Environment(object):
                 x, y = y, x
             # check for infinite types
             if y in self.free_types(x):
-                raise InferenceError(f'unifying {x} and {y} will result in an infinite type')
+                raise InferenceError(f'unifying "{x}" and "{y}" will result in an infinite type')
             self._types.merge(x, y)
         else:
-            raise InferenceError(f'{x} and {y} cannot be unified')
+            raise InferenceError(f'"{x}" and "{y}" cannot be unified')
 
 
     def generalize(self, type):
