@@ -1,16 +1,17 @@
 import ast
 from lark import Lark, InlineTransformer
-import w.exprs as exprs
+from w.exprs import *
 
 GRAMMAR = r'''
 start: expr
-expr: "(" expr ")"                  -> parens
-    | SIGNED_INT                    -> int
-    | ESCAPED_STRING                -> string
-    | VAR                           -> variable
-    | "let" VAR "=" expr "in" expr  -> let
-    | expr expr                     -> call
-    | "\\" VAR "->" expr            -> function
+expr: "(" expr ")"                      -> parens
+    | "if" expr "then" expr "else" expr -> cond 
+    | "let" VAR "=" expr "in" expr      -> let
+    | "\\" VAR "->" expr                -> function
+    | expr expr                         -> call
+    | SIGNED_INT                        -> int
+    | ESCAPED_STRING                    -> string
+    | VAR                               -> variable
 
 %import common.SIGNED_INT
 %import common.ESCAPED_STRING
@@ -20,7 +21,7 @@ expr: "(" expr ")"                  -> parens
 %ignore WS
 '''
 
-l = Lark(GRAMMAR, parser='lalr', lexer='standard')
+l = Lark(GRAMMAR, parser='lalr', lexer='standard', start='expr')
 
 class T(InlineTransformer):
 
@@ -30,23 +31,30 @@ class T(InlineTransformer):
     def parens(self, expr):
         return expr
 
-    def int(self, value):
-        return exprs.literal(ast.literal_eval(value))
-
-    def string(self, value):
-        return exprs.literal(ast.literal_eval(value))
-
-    def variable(self, name):
-        return exprs.variable(str(name))
+    def cond(self, cond, e1, e2):
+        f = variable('if')
+        f = call(f, cond)
+        f = call(f, e1)
+        f = call(f, e2)
+        return f
     
     def let(self, var, value, body):
-        return exprs.let(exprs.variable(str(var)), value, body)
+        return let(variable(str(var)), value, body)
 
     def function(self, arg, body):
-        return exprs.function(exprs.variable(str(arg)), body)
+        return function(variable(str(arg)), body)
 
     def call(self, function, arg):
-        return exprs.call(function, arg)
+        return call(function, arg)
+
+    def int(self, value):
+        return literal(ast.literal_eval(value))
+
+    def string(self, value):
+        return literal(ast.literal_eval(value))
+
+    def variable(self, name):
+        return variable(str(name))
 
 def parse(string):
     return T().transform(l.parse(string))
